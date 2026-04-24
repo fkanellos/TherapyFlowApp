@@ -1,6 +1,9 @@
 package io.therapyflow.di
 
 import io.therapyflow.data.db.TenantSchemaService
+import io.therapyflow.data.repository.*
+import io.therapyflow.domain.service.JwtService
+import io.therapyflow.domain.service.PasswordHasher
 import org.koin.dsl.module
 
 /**
@@ -20,13 +23,13 @@ val appModule = module {
     single { TenantSchemaService() }
 
     // ── Auth ──────────────────────────────────────────────────────────
-    // single { JwtService(get<AppConfig>().jwtSecret) }
-    // single { PasswordHasher() }
-    // single<UserRepository> { UserRepositoryImpl() }
-    // single<RefreshTokenRepository> { RefreshTokenRepositoryImpl() }
+    single { JwtService(get<AppConfig>().jwtSecret, get<AppConfig>().jwtIssuer) }
+    single { PasswordHasher() }
+    single<UserRepository> { UserRepositoryImpl() }
+    single<RefreshTokenRepository> { RefreshTokenRepositoryImpl() }
 
     // ── Workspace ─────────────────────────────────────────────────────
-    // single<WorkspaceRepository> { WorkspaceRepositoryImpl() }
+    single<WorkspaceRepository> { WorkspaceRepositoryImpl() }
     // single { FeatureService(get()) }
 
     // ── Therapist / Client ────────────────────────────────────────────

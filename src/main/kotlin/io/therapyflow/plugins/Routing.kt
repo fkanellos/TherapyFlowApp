@@ -4,6 +4,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.therapyflow.api.routes.authRoutes
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,7 +22,7 @@ fun Application.configureRouting() {
 
         // API v1 — add route files here as they are implemented
         route("/v1") {
-            // authRoutes()           ← uncomment when auth is implemented
+            authRoutes()
             // therapistRoutes()      ← uncomment when therapists are implemented
             // appointmentRoutes()    ← uncomment when appointments are implemented
             // payrollRoutes()        ← uncomment when payroll is implemented

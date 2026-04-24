@@ -5,20 +5,20 @@ import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.therapyflow.di.AppConfig
 import io.therapyflow.domain.tenant.TenantContext
+import org.koin.ktor.ext.inject
 import java.util.*
 
 fun Application.configureAuthentication() {
-    val jwtSecret = System.getenv("JWT_SECRET")
-        ?: error("JWT_SECRET environment variable is required")
-    val jwtIssuer = System.getenv("JWT_ISSUER") ?: "therapyflow.io"
+    val config by inject<AppConfig>()
 
     install(Authentication) {
         jwt("jwt") {
             realm = "therapyflow"
             verifier(
-                JWT.require(Algorithm.HMAC256(jwtSecret))
-                    .withIssuer(jwtIssuer)
+                JWT.require(Algorithm.HMAC256(config.jwtSecret))
+                    .withIssuer(config.jwtIssuer)
                     .build()
             )
             validate { credential ->
