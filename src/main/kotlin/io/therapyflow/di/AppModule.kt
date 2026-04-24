@@ -1,5 +1,6 @@
 package io.therapyflow.di
 
+import io.therapyflow.data.db.TenantSchemaService
 import org.koin.dsl.module
 
 /**
@@ -14,6 +15,9 @@ val appModule = module {
 
     // Environment config — available to all
     single { AppConfig.load() }
+
+    // ── Multi-tenancy ─────────────────────────────────────────────────
+    single { TenantSchemaService() }
 
     // ── Auth ──────────────────────────────────────────────────────────
     // single { JwtService(get<AppConfig>().jwtSecret) }

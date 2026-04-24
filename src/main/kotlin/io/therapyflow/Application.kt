@@ -28,6 +28,7 @@ fun Application.module() {
     configureDatabase()
 
     // 3. Plugins (order matters)
+    configureTenantCleanup()   // must be before auth so finally runs after all plugins
     configureSerialization()
     configureCors()
     configureAuthentication()

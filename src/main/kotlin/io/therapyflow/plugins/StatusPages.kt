@@ -8,14 +8,14 @@ import io.ktor.server.response.*
 import io.therapyflow.domain.error.AppError
 import org.slf4j.LoggerFactory
 
-private val log = LoggerFactory.getLogger("StatusPages")
+private val logger = LoggerFactory.getLogger("StatusPages")
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
 
         // Domain errors → structured JSON response
         exception<AppError> { call, error ->
-            log.warn("AppError: ${error.code} — ${error.message}")
+            logger.warn("AppError: ${error.code} — ${error.message}")
             call.respond(
                 status = HttpStatusCode.fromValue(error.httpStatus),
                 message = mapOf(
@@ -36,7 +36,7 @@ fun Application.configureStatusPages() {
 
         // Catch-all — never expose stack traces in production
         exception<Throwable> { call, cause ->
-            log.error("Unhandled exception", cause)
+            logger.error("Unhandled exception", cause)
             call.respond(
                 HttpStatusCode.InternalServerError,
                 mapOf("error" to "INTERNAL_ERROR", "message" to "An unexpected error occurred")
