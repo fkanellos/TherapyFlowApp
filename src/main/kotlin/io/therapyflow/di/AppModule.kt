@@ -33,7 +33,7 @@ val appModule = module {
     // single { FeatureService(get()) }
 
     // ── Therapist / Client ────────────────────────────────────────────
-    // single<TherapistRepository> { TherapistRepositoryImpl() }
+    single<TherapistRepository> { TherapistRepositoryImpl() }
     // single<ClientRepository> { ClientRepositoryImpl() }
     // single<ClientAliasRepository> { ClientAliasRepositoryImpl() }
 
