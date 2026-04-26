@@ -4,6 +4,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.therapyflow.api.routes.appointmentRoutes
 import io.therapyflow.api.routes.authRoutes
 import io.therapyflow.api.routes.clientRoutes
 import io.therapyflow.api.routes.therapistRoutes
@@ -27,7 +28,7 @@ fun Application.configureRouting() {
             authRoutes()
             therapistRoutes()
             clientRoutes()
-            // appointmentRoutes()    ← uncomment when appointments are implemented
+            appointmentRoutes()
             // payrollRoutes()        ← uncomment when payroll is implemented
         }
     }

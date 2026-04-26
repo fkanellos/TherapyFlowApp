@@ -38,7 +38,7 @@ val appModule = module {
     // single<ClientAliasRepository> { ClientAliasRepositoryImpl() }
 
     // ── Appointments ──────────────────────────────────────────────────
-    // single<AppointmentRepository> { AppointmentRepositoryImpl() }
+    single<AppointmentRepository> { AppointmentRepositoryImpl() }
     // single { GreekNameMatcher() }
 
     // ── Payroll ───────────────────────────────────────────────────────
