@@ -34,7 +34,7 @@ val appModule = module {
 
     // ── Therapist / Client ────────────────────────────────────────────
     single<TherapistRepository> { TherapistRepositoryImpl() }
-    // single<ClientRepository> { ClientRepositoryImpl() }
+    single<ClientRepository> { ClientRepositoryImpl() }
     // single<ClientAliasRepository> { ClientAliasRepositoryImpl() }
 
     // ── Appointments ──────────────────────────────────────────────────
