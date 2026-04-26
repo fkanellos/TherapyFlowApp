@@ -2,6 +2,7 @@ package io.therapyflow.di
 
 import io.therapyflow.data.db.TenantSchemaService
 import io.therapyflow.data.repository.*
+import io.therapyflow.domain.service.FeatureService
 import io.therapyflow.domain.service.JwtService
 import io.therapyflow.domain.service.PasswordHasher
 import org.koin.dsl.module
@@ -30,7 +31,8 @@ val appModule = module {
 
     // ── Workspace ─────────────────────────────────────────────────────
     single<WorkspaceRepository> { WorkspaceRepositoryImpl() }
-    // single { FeatureService(get()) }
+    single<FeatureRepository> { FeatureRepositoryImpl() }
+    single { FeatureService(get()) }
 
     // ── Therapist / Client ────────────────────────────────────────────
     single<TherapistRepository> { TherapistRepositoryImpl() }

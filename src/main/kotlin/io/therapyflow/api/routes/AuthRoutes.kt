@@ -12,6 +12,7 @@ import io.therapyflow.data.repository.WorkspaceRepository
 import io.therapyflow.domain.error.AppError
 import io.therapyflow.domain.model.*
 import io.therapyflow.domain.service.JwtService
+import io.therapyflow.domain.service.FeatureService
 import io.therapyflow.domain.service.PasswordHasher
 import org.koin.ktor.ext.inject
 import java.time.Instant
@@ -22,6 +23,7 @@ fun Route.authRoutes() {
     val userRepository by inject<UserRepository>()
     val workspaceRepository by inject<WorkspaceRepository>()
     val refreshTokenRepository by inject<RefreshTokenRepository>()
+    val featureService by inject<FeatureService>()
     val jwtService by inject<JwtService>()
     val passwordHasher by inject<PasswordHasher>()
     val tenantSchemaService by inject<TenantSchemaService>()
@@ -147,6 +149,9 @@ fun Route.authRoutes() {
 
             // Create tenant schema with all tables
             tenantSchemaService.createSchema(request.workspaceSlug)
+
+            // Provision default features for the workspace plan
+            featureService.provisionDefaults(workspaceId, Plan.FREE)
 
             // Create owner user
             val userId = UUID.randomUUID()
