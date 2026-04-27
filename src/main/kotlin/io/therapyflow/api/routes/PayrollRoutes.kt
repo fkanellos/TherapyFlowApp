@@ -17,8 +17,8 @@ import org.koin.ktor.ext.inject
 import java.util.*
 
 fun Route.payrollRoutes() {
-    val payrollService by inject<PayrollCalculationService>()
-    val payrollRepository by inject<PayrollRepository>()
+    val payrollService by application.inject<PayrollCalculationService>()
+    val payrollRepository by application.inject<PayrollRepository>()
 
     authenticate("jwt") {
         requireRole(UserRole.OWNER) {

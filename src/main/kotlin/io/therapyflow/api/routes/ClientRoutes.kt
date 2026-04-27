@@ -19,8 +19,8 @@ import java.time.Instant
 import java.util.*
 
 fun Route.clientRoutes() {
-    val clientRepository by inject<ClientRepository>()
-    val therapistRepository by inject<TherapistRepository>()
+    val clientRepository by application.inject<ClientRepository>()
+    val therapistRepository by application.inject<TherapistRepository>()
 
     authenticate("jwt") {
         route("/clients") {

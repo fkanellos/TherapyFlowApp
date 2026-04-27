@@ -22,7 +22,7 @@ import org.koin.ktor.ext.inject
  * ```
  */
 fun Route.requireFeature(featureKey: String, build: Route.() -> Unit): Route {
-    val featureService by inject<FeatureService>()
+    val featureService by application.inject<FeatureService>()
 
     val selector = object : RouteSelector() {
         override suspend fun evaluate(context: RoutingResolveContext, segmentIndex: Int) =

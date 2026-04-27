@@ -6,9 +6,13 @@ import io.ktor.server.plugins.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.therapyflow.domain.error.AppError
+import kotlinx.serialization.Serializable
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("StatusPages")
+
+@Serializable
+data class ErrorResponse(val error: String, val message: String, val status: Int)
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
@@ -18,10 +22,10 @@ fun Application.configureStatusPages() {
             logger.warn("AppError: ${error.code} — ${error.message}")
             call.respond(
                 status = HttpStatusCode.fromValue(error.httpStatus),
-                message = mapOf(
-                    "error"   to error.code,
-                    "message" to error.message,
-                    "status"  to error.httpStatus
+                message = ErrorResponse(
+                    error = error.code,
+                    message = error.message,
+                    status = error.httpStatus
                 )
             )
         }
@@ -30,7 +34,11 @@ fun Application.configureStatusPages() {
         exception<BadRequestException> { call, cause ->
             call.respond(
                 HttpStatusCode.BadRequest,
-                mapOf("error" to "BAD_REQUEST", "message" to (cause.message ?: "Invalid request"))
+                ErrorResponse(
+                    error = "BAD_REQUEST",
+                    message = cause.message ?: "Invalid request",
+                    status = 400
+                )
             )
         }
 
@@ -39,7 +47,11 @@ fun Application.configureStatusPages() {
             logger.error("Unhandled exception", cause)
             call.respond(
                 HttpStatusCode.InternalServerError,
-                mapOf("error" to "INTERNAL_ERROR", "message" to "An unexpected error occurred")
+                ErrorResponse(
+                    error = "INTERNAL_ERROR",
+                    message = "An unexpected error occurred",
+                    status = 500
+                )
             )
         }
 
@@ -47,7 +59,11 @@ fun Application.configureStatusPages() {
         status(HttpStatusCode.NotFound) { call, _ ->
             call.respond(
                 HttpStatusCode.NotFound,
-                mapOf("error" to "NOT_FOUND", "message" to "Route not found")
+                ErrorResponse(
+                    error = "NOT_FOUND",
+                    message = "Route not found",
+                    status = 404
+                )
             )
         }
     }

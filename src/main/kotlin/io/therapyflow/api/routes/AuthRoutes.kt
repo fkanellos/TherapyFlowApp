@@ -20,13 +20,13 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 
 fun Route.authRoutes() {
-    val userRepository by inject<UserRepository>()
-    val workspaceRepository by inject<WorkspaceRepository>()
-    val refreshTokenRepository by inject<RefreshTokenRepository>()
-    val featureService by inject<FeatureService>()
-    val jwtService by inject<JwtService>()
-    val passwordHasher by inject<PasswordHasher>()
-    val tenantSchemaService by inject<TenantSchemaService>()
+    val userRepository by application.inject<UserRepository>()
+    val workspaceRepository by application.inject<WorkspaceRepository>()
+    val refreshTokenRepository by application.inject<RefreshTokenRepository>()
+    val featureService by application.inject<FeatureService>()
+    val jwtService by application.inject<JwtService>()
+    val passwordHasher by application.inject<PasswordHasher>()
+    val tenantSchemaService by application.inject<TenantSchemaService>()
 
     route("/auth") {
 
