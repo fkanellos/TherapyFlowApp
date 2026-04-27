@@ -1,8 +1,11 @@
 package io.therapyflow
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.therapyflow.di.appModule
 import io.therapyflow.plugins.*
 import org.koin.ktor.plugin.Koin
@@ -30,10 +33,22 @@ fun Application.module() {
     // 3. Plugins (order matters)
     configureTenantCleanup()   // must be before auth so finally runs after all plugins
     configureSerialization()
+    configureSecurityHeaders()
+    configureRateLimiting()
     configureCors()
     configureAuthentication()
     configureStatusPages()
     configureRequestValidation()
+
+    // 3.5 Request size limiting (1 MB)
+    intercept(ApplicationCallPipeline.Plugins) {
+        val contentLength = call.request.header(HttpHeaders.ContentLength)?.toLongOrNull()
+        if (contentLength != null && contentLength > 1_048_576) {
+            call.respond(HttpStatusCode.PayloadTooLarge, mapOf("error" to "PAYLOAD_TOO_LARGE"))
+            finish()
+            return@intercept
+        }
+    }
 
     // 4. Routes
     configureRouting()

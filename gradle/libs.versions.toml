@@ -27,6 +27,7 @@ ktor-server-cors                  = { module = "io.ktor:ktor-server-cors-jvm",  
 ktor-server-status-pages          = { module = "io.ktor:ktor-server-status-pages-jvm",           version.ref = "ktor" }
 ktor-server-call-logging          = { module = "io.ktor:ktor-server-call-logging-jvm",           version.ref = "ktor" }
 ktor-server-request-validation    = { module = "io.ktor:ktor-server-request-validation-jvm",     version.ref = "ktor" }
+ktor-server-default-headers       = { module = "io.ktor:ktor-server-default-headers-jvm",        version.ref = "ktor" }
 ktor-server-test-host             = { module = "io.ktor:ktor-server-test-host-jvm",              version.ref = "ktor" }
 
 # Ktor Serialization

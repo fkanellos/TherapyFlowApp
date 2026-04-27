@@ -2,6 +2,7 @@ package io.therapyflow.di
 
 import io.therapyflow.data.db.TenantSchemaService
 import io.therapyflow.data.repository.*
+import io.therapyflow.domain.service.EncryptionService
 import io.therapyflow.domain.service.FeatureService
 import io.therapyflow.domain.service.JwtService
 import io.therapyflow.domain.service.PasswordHasher
@@ -24,6 +25,9 @@ val appModule = module {
     // ── Multi-tenancy ─────────────────────────────────────────────────
     single { TenantSchemaService() }
 
+    // ── Encryption ──────────────────────────────────────────────────────
+    single { EncryptionService(get<AppConfig>().encryptionKey) }
+
     // ── Auth ──────────────────────────────────────────────────────────
     single { JwtService(get<AppConfig>().jwtSecret, get<AppConfig>().jwtIssuer) }
     single { PasswordHasher() }
@@ -36,12 +40,12 @@ val appModule = module {
     single { FeatureService(get()) }
 
     // ── Therapist / Client ────────────────────────────────────────────
-    single<TherapistRepository> { TherapistRepositoryImpl() }
-    single<ClientRepository> { ClientRepositoryImpl() }
+    single<TherapistRepository> { TherapistRepositoryImpl(get()) }
+    single<ClientRepository> { ClientRepositoryImpl(get()) }
     // single<ClientAliasRepository> { ClientAliasRepositoryImpl() }
 
     // ── Appointments ──────────────────────────────────────────────────
-    single<AppointmentRepository> { AppointmentRepositoryImpl() }
+    single<AppointmentRepository> { AppointmentRepositoryImpl(get()) }
     // single { GreekNameMatcher() }
 
     // ── Payroll ───────────────────────────────────────────────────────
@@ -66,6 +70,7 @@ data class AppConfig(
     val databasePassword: String,
     val googleClientId: String,
     val googleClientSecret: String,
+    val encryptionKey: String,
 ) {
     companion object {
         fun load() = AppConfig(
@@ -76,6 +81,7 @@ data class AppConfig(
             databasePassword    = System.getenv("DATABASE_PASSWORD") ?: "therapyflow",
             googleClientId      = System.getenv("GOOGLE_CLIENT_ID") ?: "",
             googleClientSecret  = System.getenv("GOOGLE_CLIENT_SECRET") ?: "",
+            encryptionKey       = requireEnv("ENCRYPTION_KEY"),
         )
 
         private fun requireEnv(key: String): String =

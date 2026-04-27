@@ -3,13 +3,14 @@ package io.therapyflow.data.repository
 import io.therapyflow.data.db.tenantTransaction
 import io.therapyflow.data.table.TherapistTable
 import io.therapyflow.domain.model.Therapist
+import io.therapyflow.domain.service.EncryptionService
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.util.*
 
-class TherapistRepositoryImpl : TherapistRepository {
+class TherapistRepositoryImpl(private val encryption: EncryptionService) : TherapistRepository {
 
     override suspend fun findAll(): List<Therapist> = tenantTransaction {
         TherapistTable.selectAll()
@@ -36,8 +37,8 @@ class TherapistRepositoryImpl : TherapistRepository {
         TherapistTable.insert {
             it[id] = therapist.id
             it[userId] = therapist.userId
-            it[firstName] = therapist.firstName
-            it[lastName] = therapist.lastName
+            it[firstName] = encryption.encrypt(therapist.firstName)
+            it[lastName] = encryption.encrypt(therapist.lastName)
             it[commissionRate] = therapist.commissionRate
             it[receivesSupervisionFee] = therapist.receivesSupervisionFee
             it[isActive] = true
@@ -50,8 +51,8 @@ class TherapistRepositoryImpl : TherapistRepository {
     override suspend fun update(therapist: Therapist): Therapist = tenantTransaction {
         val now = Clock.System.now()
         TherapistTable.update({ TherapistTable.id eq therapist.id }) {
-            it[firstName] = therapist.firstName
-            it[lastName] = therapist.lastName
+            it[firstName] = encryption.encrypt(therapist.firstName)
+            it[lastName] = encryption.encrypt(therapist.lastName)
             it[commissionRate] = therapist.commissionRate
             it[receivesSupervisionFee] = therapist.receivesSupervisionFee
             it[updatedAt] = now
@@ -70,8 +71,8 @@ class TherapistRepositoryImpl : TherapistRepository {
     private fun ResultRow.toTherapist() = Therapist(
         id = this[TherapistTable.id],
         userId = this[TherapistTable.userId],
-        firstName = this[TherapistTable.firstName],
-        lastName = this[TherapistTable.lastName],
+        firstName = encryption.decrypt(this[TherapistTable.firstName]),
+        lastName = encryption.decrypt(this[TherapistTable.lastName]),
         commissionRate = this[TherapistTable.commissionRate],
         receivesSupervisionFee = this[TherapistTable.receivesSupervisionFee],
         isActive = this[TherapistTable.isActive],

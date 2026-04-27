@@ -3,6 +3,7 @@ package io.therapyflow.data.repository
 import io.therapyflow.data.db.tenantTransaction
 import io.therapyflow.data.table.AppointmentTable
 import io.therapyflow.domain.model.Appointment
+import io.therapyflow.domain.service.EncryptionService
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
@@ -11,7 +12,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.time.Instant
 import java.util.*
 
-class AppointmentRepositoryImpl : AppointmentRepository {
+class AppointmentRepositoryImpl(private val encryption: EncryptionService) : AppointmentRepository {
 
     override suspend fun findAll(): List<Appointment> = tenantTransaction {
         AppointmentTable.selectAll()
@@ -78,7 +79,7 @@ class AppointmentRepositoryImpl : AppointmentRepository {
             it[status] = appointment.status
             it[googleCalendarEventId] = appointment.googleCalendarEventId
             it[appointmentSource] = appointment.source
-            it[notes] = appointment.notes
+            it[notes] = encryption.encryptNullable(appointment.notes)
             it[isActive] = true
             it[createdAt] = now
             it[updatedAt] = now
@@ -94,7 +95,7 @@ class AppointmentRepositoryImpl : AppointmentRepository {
             it[price] = appointment.price
             it[sessionType] = appointment.sessionType
             it[status] = appointment.status
-            it[notes] = appointment.notes
+            it[notes] = encryption.encryptNullable(appointment.notes)
             it[updatedAt] = now
         }
         appointment.copy(updatedAt = now.toJavaInstant())
@@ -119,7 +120,7 @@ class AppointmentRepositoryImpl : AppointmentRepository {
         status = this[AppointmentTable.status],
         googleCalendarEventId = this[AppointmentTable.googleCalendarEventId],
         source = this[AppointmentTable.appointmentSource],
-        notes = this[AppointmentTable.notes],
+        notes = encryption.decryptNullable(this[AppointmentTable.notes]),
         isActive = this[AppointmentTable.isActive],
         createdAt = this[AppointmentTable.createdAt].toJavaInstant(),
         updatedAt = this[AppointmentTable.updatedAt].toJavaInstant()

@@ -3,13 +3,14 @@ package io.therapyflow.data.repository
 import io.therapyflow.data.db.tenantTransaction
 import io.therapyflow.data.table.ClientTable
 import io.therapyflow.domain.model.Client
+import io.therapyflow.domain.service.EncryptionService
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.util.*
 
-class ClientRepositoryImpl : ClientRepository {
+class ClientRepositoryImpl(private val encryption: EncryptionService) : ClientRepository {
 
     override suspend fun findAll(): List<Client> = tenantTransaction {
         ClientTable.selectAll()
@@ -35,8 +36,8 @@ class ClientRepositoryImpl : ClientRepository {
         ClientTable.insert {
             it[id] = client.id
             it[therapistId] = client.therapistId
-            it[firstName] = client.firstName
-            it[lastName] = client.lastName
+            it[firstName] = encryption.encrypt(client.firstName)
+            it[lastName] = encryption.encrypt(client.lastName)
             it[googleCalendarName] = client.googleCalendarName
             it[customPrice] = client.customPrice
             it[isActive] = true
@@ -49,8 +50,8 @@ class ClientRepositoryImpl : ClientRepository {
     override suspend fun update(client: Client): Client = tenantTransaction {
         val now = Clock.System.now()
         ClientTable.update({ ClientTable.id eq client.id }) {
-            it[firstName] = client.firstName
-            it[lastName] = client.lastName
+            it[firstName] = encryption.encrypt(client.firstName)
+            it[lastName] = encryption.encrypt(client.lastName)
             it[googleCalendarName] = client.googleCalendarName
             it[customPrice] = client.customPrice
             it[updatedAt] = now
@@ -69,8 +70,8 @@ class ClientRepositoryImpl : ClientRepository {
     private fun ResultRow.toClient() = Client(
         id = this[ClientTable.id],
         therapistId = this[ClientTable.therapistId],
-        firstName = this[ClientTable.firstName],
-        lastName = this[ClientTable.lastName],
+        firstName = encryption.decrypt(this[ClientTable.firstName]),
+        lastName = encryption.decrypt(this[ClientTable.lastName]),
         googleCalendarName = this[ClientTable.googleCalendarName],
         customPrice = this[ClientTable.customPrice],
         isActive = this[ClientTable.isActive],

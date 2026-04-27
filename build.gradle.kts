@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.request.validation)
+    implementation(libs.ktor.server.default.headers)
 
     // Serialization
     implementation(libs.ktor.serialization.kotlinx.json)
