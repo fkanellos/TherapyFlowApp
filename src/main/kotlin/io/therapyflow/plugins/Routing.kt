@@ -7,6 +7,7 @@ import io.ktor.server.routing.*
 import io.therapyflow.api.routes.appointmentRoutes
 import io.therapyflow.api.routes.authRoutes
 import io.therapyflow.api.routes.clientRoutes
+import io.therapyflow.api.routes.payrollRoutes
 import io.therapyflow.api.routes.therapistRoutes
 import kotlinx.serialization.Serializable
 
@@ -29,7 +30,7 @@ fun Application.configureRouting() {
             therapistRoutes()
             clientRoutes()
             appointmentRoutes()
-            // payrollRoutes()        ← uncomment when payroll is implemented
+            payrollRoutes()
         }
     }
 }

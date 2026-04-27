@@ -5,6 +5,7 @@ import io.therapyflow.data.repository.*
 import io.therapyflow.domain.service.FeatureService
 import io.therapyflow.domain.service.JwtService
 import io.therapyflow.domain.service.PasswordHasher
+import io.therapyflow.domain.service.PayrollCalculationService
 import org.koin.dsl.module
 
 /**
@@ -44,8 +45,9 @@ val appModule = module {
     // single { GreekNameMatcher() }
 
     // ── Payroll ───────────────────────────────────────────────────────
-    // single { PayrollCalculationService(get(), get()) }
-    // single<PayrollRepository> { PayrollRepositoryImpl() }
+    single<PayrollRepository> { PayrollRepositoryImpl() }
+    single<PendingChargeRepository> { PendingChargeRepositoryImpl() }
+    single { PayrollCalculationService(get(), get(), get(), get(), get()) }
 
     // ── Google Calendar ───────────────────────────────────────────────
     // single { GoogleCalendarApi(get()) }
